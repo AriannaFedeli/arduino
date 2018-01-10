@@ -64,6 +64,9 @@ void loop() {
   freq = computeHeartRate(sped);
   
   Serial.println(String(freq) + "|" + String(sped)); // invia il valore al pc.
+  //quando scrivo devo pure fare la post al server, rimane da gestire la cosa del capire a che trend mi sto riferendo per inviare le misurazioni
+  //https://github.com/initialstate/arduino_streamers/wiki/Ciao-Library
+
 
   delay(1000); // wait.
 }
