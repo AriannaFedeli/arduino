@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import serial
 from datetime import date, datetime, timedelta
-import mysql.connector
+import requests
 
 
 SERIAL_PORT = "/dev/ttyACM0"
@@ -12,46 +12,24 @@ ser = serial.Serial(
         baudrate=SERIAL_BAUD_RATE
 )
 
-cnx = mysql.connector.connect(user='root', database='unicam-horse')
 
+username = "testuser2"
+password = "arrivederci"
+headers = {'Content-type':'application/json'}
+r = requests.post('http://localhost:8000/login_check')
+# bisogna mettere l'header giusto e le info per il login nel body
+# poi devo decodificare il json di ritorno
+# prendo il token dal json
 def main():
     print "Programma di monitoraggio cavalli."
     while(1):
         data = ser.readline()
         data = data.decode("utf-8").strip("|")
         print data
-
-cursor = cnx.cursor()
-
-tomorrow = datetime.now().date() + timedelta(days=1)
-
-add_employee = ("INSERT INTO employees "
-               "(first_name, last_name, hire_date, gender, birth_date) "
-               "VALUES (%s, %s, %s, %s, %s)")
-add_salary = ("INSERT INTO salaries "
-              "(emp_no, salary, from_date, to_date) "
-              "VALUES (%(emp_no)s, %(salary)s, %(from_date)s, %(to_date)s)")
-
-data_employee = ('Geert', 'Vanderkelen', tomorrow, 'M', date(1977, 6, 14))
-
-# Insert new employee
-cursor.execute(add_employee, data_employee)
-emp_no = cursor.lastrowid
-
-# Insert salary information
-data_salary = {
-  'emp_no': emp_no,
-  'salary': 50000,
-  'from_date': tomorrow,
-  'to_date': date(9999, 1, 1),
-}
-cursor.execute(add_salary, data_salary)
-
-# Make sure data is committed to the database
-cnx.commit()
-
-cursor.close()
-cnx.close()
+        # qui dovrei eseguire ogni volta una post della measure
+        # fare json, formattarlo e inviarlo nella request
+        r = requests.post(url, headers=headers)
+        # nell'header ci va il token, key Authorization, nel value mettere Bearer
 
 
 

@@ -8,6 +8,12 @@ int freq_min;
 
 int speed_var = 0;
 
+#define CONNECTOR     "rest" 
+#define SERVER_ADDR   "insecure-groker.initialstate.com"
+
+#define TOKEN  "Your_IS_Access_Key"
+#define TRENDID  "ciao_stream"
+String uri = "localhost:8000/measure";
 
 int clk = 0;
 void setup() {
@@ -65,6 +71,22 @@ void loop() {
   
   Serial.println(String(freq) + "|" + String(sped)); // invia il valore al pc.
   //quando scrivo devo pure fare la post al server, rimane da gestire la cosa del capire a che trend mi sto riferendo per inviare le misurazioni
+  
+
+  
+  Ciao.println("Send data to Initial State"); 
+  
+  // Send the raw HTTP request
+  CiaoData data = Ciao.write(CONNECTOR, SERVER_ADDR, uri);
+
+  if (!data.isEmpty()){
+    Ciao.println( "State: " + String (data.get(1)) );
+    Ciao.println( "Response: " + String (data.get(2)) );
+  }
+  else{ 
+    Ciao.println("Write Error");
+  }    
+ 
   //https://github.com/initialstate/arduino_streamers/wiki/Ciao-Library
 
 
