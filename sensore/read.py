@@ -12,7 +12,7 @@ ser = serial.Serial(
         baudrate=SERIAL_BAUD_RATE
 )
 
-cnx = mysql.connector.connect(user='root', database='unicam-horse')
+cnx = mysql.connector.connect(user='testUser2', database='unicam-horse')
 
 def main():
     print "Programma di monitoraggio cavalli."
