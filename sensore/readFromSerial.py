@@ -68,13 +68,20 @@ def main():
   strPort = args.port
 
   print('reading from serial port %s...' % strPort)
+  urlLogin = "http://localhost:8000/login_check"
+  username = "testuser2"
+  password = "arrivederci"
+  doLogin = (requests.post(urlLogin, data={username, password})
+  print(doLogin.text)
+  jsonToken = json.loads(doLogin.text)
+  token = jsonToken['token']
   url = "http://localhost:8000/api/trend"
   state = "BUILDING"
   ts=time.time()
   #ATTENZIONE: L'APERTURA DEL TREND NON DEVE ESSERE ESEGUITA IN MANIERA CICLICA
   horse = 1
-  header = {'Access-Control-Allow-Origin':'*',
-  'Authorization': "Bearer eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX09QRVJBVE9SIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdHVzZXIyIiwiaWF0IjoxNTE2MDI0MjcyLCJleHAiOjE1MTYwMjc4NzJ9.MDsZXExujwyJz8ubeBcqFxdwBnzSHXuOjFqJVXarmWU-ERZoYrpkW0U1NIzxBvLe2u1KIO61a43hgeDigkHN5cgoq48p10yqDaCGdujYinz6RKzI51nXKPkruC-ETyN8fSIFNwVJfvSJ2B-hTFnBbRXQ6fPdxgtV-kZaa_T9409-OOrXMMWjzRrRCNWlluu48yE5ZkpiXzWAPEKlr4eMvhqBxKYSIjfBeIG98xWEtQYwqbj0sJU9wCme6HjhzL_V0ggNr9Xmd3eSy6WenROWMMWX4T_tgq10ymoWfLFoTy3pF39mMNW1BEBmPR4UWsiwtluIJhcb90M4zdavaDMv2TzBa0vWl4bKYkroIMCPt5BkWyPShebGmn4ZX4GyH6NZF4-qAVXV8ZIhhQ6hJ27oD67vs7VKH8H-5SBXP2_0fpE9Pv89Bzc0hOaGlDQWLN27mF_MI0vFRHOg7enPtBUh6Xz8gt3ENdp_B6ZALXomZ9EAUBwzz0rh-LM-gzt_hek4Od2RS915iMmSrf6nkz31Tsu3qabNVe_6rO4TRQYRDfigr6WkUMHf2K8y6eANcRM3v2WqKE_gcQz3Ke4KPZzuRzHmdtmIQhsP30vwuHq4K-GW5YsmeVHaeGGVNRBN4CW1yKNReUBD3fA7UItf4kcDTZpHRsZu19OxYXoSVwyiKTQ"}
+  authorization = "Bearer %s" %token
+  header = {'Access-Control-Allow-Origin':'*', 'Authorization': authorization}
   payload={"horse":horse, "beginTs": int(ts), "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100}
   #print(payload)
   #print(header)
