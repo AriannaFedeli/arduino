@@ -1,10 +1,3 @@
-"""
-ldr.py
-Display analog data from Arduino using Python (matplotlib)
-Author: Mahesh Venkitachalam
-Website: electronut.in
-"""
-
 import sys, serial, argparse
 import numpy as np
 from time import sleep
@@ -12,13 +5,11 @@ import time
 from datetime import date, datetime, timedelta
 from collections import deque
 import requests
+import json
 
-import matplotlib.pyplot as plt 
-import matplotlib.animation as animation
 
     
-# plot class
-class AnalogPlot:
+class SendData:
   # constr
   def __init__(self, strPort, maxLen):
       # open serial port
@@ -88,28 +79,24 @@ def main():
   print(payload)
   print(header)
   openTrend = (requests.post(url, headers=header, json=(payload)))
-  json =(openTrend)
-  print(openTrend)
-  print(json.text)
-  # plot parameters
-  '''analogPlot = AnalogPlot(strPort, 100)
+  print(openTrend.text)
+  jsonResult = json.loads(openTrend.text)
+  #devo capire com'è strutturato questo oggetto per poter poi prendere l'id del trend
+  for value in jsonResult:
+    print(value['id'])
 
-  print('plotting data...')
+  #faccio finta di avere l'id del trend nella variabile id
+  #questa operazione deve essere eseguita finché ho dati nella Serial port
+  id=1
+  urlMeasure = "http://localhost:8000/api/measure" 
+  payload = {}
+  sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
+  print(sendValue.text) #mi assicuro di ricevere dal server uno status code == 200
 
-  # set up animation
-  fig = plt.figure()
-  ax = plt.axes(xlim=(0, 100), ylim=(0, 1023))
-  a0, = ax.plot([], [])
-  a1, = ax.plot([], [])
-  anim = animation.FuncAnimation(fig, analogPlot.update, 
-                                 fargs=(a0, a1), 
-                                 interval=50)
+  #una volta che la Serial port non genera più dati, allora devo chiudere il trend settando lo state a valid. 
 
-  # show plot
-  plt.show()
-  
-  # clean up
-  analogPlot.close()'''
+  #problema: come posso sapere se ho avuto perdite di dati e settare quindi il trend con state a invalid?
+
 
   print('exiting.')
   
