@@ -37,13 +37,12 @@ def main():
         print data
         # qui dovrei eseguire ogni volta una post della measure
         # fare json, formattarlo e inviarlo nella request
-        payload = {'state':state, 'beginTs': beginTs, 'horse':horse}
-        r = requests.post(url, headers={authorization}, data=payload)
-        print(r.text)
+payload = {'state':state, 'beginTs': beginTs, 'horse':horse}
+r = requests.post(url, headers={authorization}, data=payload)
+print(r.text)
+        # quindi recupero l'id del trend dalla richiesta
+
         # nell'header ci va il token, key Authorization, nel value mettere Bearer
-
-
-
  
  
  def send(packet):
