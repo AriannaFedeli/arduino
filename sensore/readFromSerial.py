@@ -83,9 +83,11 @@ def main():
   ts=time.time()
   #beginTs = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
   horse = 1
-  print('this is authorization: %s; this is state: %s; this is ts: %d;') %(authorization, state, ts)
-  payload={'horse':horse, 'beginTs': ts, 'state':state} 
-  openTrend = requests.post(url, headers=authorization, data=payload)
+  contenttype = {'Content-Type':'application/json'}
+  header = {'Content-Type':'application/json', 'Authorization': 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX09QRVJBVE9SIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdHVzZXIyIiwiaWF0IjoxNTE2MDE3NTE0LCJleHAiOjE1MTYwNTM1MTR9.gQmdZlomJLANxNPfjYvM_aB8qJodJmIOfraDu0qtHtUrqa21ImDHLTztfLFED47iM_8pMd0E0UrW_qCBYuSe9bKGWsbafp6ntvb2EAYA_f0x7zTZBtuylg9-fiqk96nT8Kt4pCffeoMawhLY_nllkzByJbA8UgUMx6Ged95rbZmpph4HOb4WbRy6avgCXunlbXRGafIeMyym1I5N2oXVgBgd1KrE11xp845Ut1viVAClyswTGrKeYadnXRLKfnJZkdSpQOtEhXGmDgbms63niH_780-LJLFsAU84amxcU0VM6MDyyt3HY8xU6Yg6IDFNuxG3AeBNPOiSyM6CHL4DMkqNs8bw4VLD_X1JeGLU78kaQj--0OVWPM46kR7EuY6UmjuwCtQkn5cKsZpROmxwbWBUrf64G59HDPQNUGHcpXqir3zrDhYSx3XzHYCzaB19NPuRhv9RrqBkl_mLmwmt0u4xtf_Rk9Jgg1e8spQu5dqvS1K1mtuFZPZHi0Xwqvzu4BmSRP4PBoXR6z1WuQ-ZGZouJ4SVZXPWlOke4cREtOGl8sr1t_udMk9BO6FJ4BYheVrZf0-jISE4ZX3G9Bp0cTsZkljav5VrGZAM2W2fnG0i7XDmCY4vqBLPEvlJAZMSBb2V5ZQ_LsXhSa5esudb-Y5xYS5QQL5RVAEIyrQ7L_E'}
+  payload={"horse":horse, "beginTs": int(ts), "endTs": int(ts), "state": state,"distance": 20.0,"maxhrt": 120,"minhrt": 80,"avghrt": 100}
+  print(payload)
+  openTrend = requests.post(url, headers=header, data=payload)
   print(openTrend.text)
   # plot parameters
   '''analogPlot = AnalogPlot(strPort, 100)

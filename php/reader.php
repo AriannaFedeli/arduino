@@ -18,6 +18,6 @@ $serial->deviceSet("/dev/ttyACM0");
 // Then we need to open it
 $serial->deviceOpen();
 
-echo $serial->readPort(10);
+echo $serial->readPort();
 
 
