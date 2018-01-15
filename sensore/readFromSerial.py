@@ -69,12 +69,12 @@ def main():
 
   print('reading from serial port %s...' % strPort)
   urlLogin = "http://localhost:8000/login_check"
-  username = "testuser2"
+  username = "testUser2"
   password = "arrivederci"
-  doLogin = (requests.post(urlLogin, data={username, password})
-  print(doLogin.text)
+  doLogin = (requests.post(urlLogin, data={'_username': username, '_password': password}))
   jsonToken = json.loads(doLogin.text)
   token = jsonToken['token']
+  print("ho il token")
   url = "http://localhost:8000/api/trend"
   state = "BUILDING"
   ts=time.time()
@@ -82,37 +82,34 @@ def main():
   horse = 1
   authorization = "Bearer %s" %token
   header = {'Access-Control-Allow-Origin':'*', 'Authorization': authorization}
-  payload={"horse":horse, "beginTs": int(ts), "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100}
+  payload={"horse": horse, "beginTs": int(ts), "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100 , "endTs" : 1}
   openTrend = (requests.post(url, headers=header, json=(payload)))
-  print(openTrend.text)
   jsonResult = json.loads(openTrend.text)
   trendId = jsonResult['id']
-  
-
-
-  #questa operazione deve essere eseguita finché ho dati nella Serial port
+  print("ho aperto il trend e l'id e %s") %trendId
+# questo lo devo eseguire in loop fino a quando la serial non prende piu alcun dato  
   urlMeasure = "http://localhost:8000/api/measure" 
-  ts=time.time()
-  hrt = "DEVO PRENDERE IL BATTITO DALLA PORTA SERIALE"
-  dst = "DEVO PRENDERE IL BATTITO DALLA PORTA SERIALE"
-  spd = "DEVO PRENDERE IL BATTITO DALLA PORTA SERIALE"
-  payload = {"ts": ts , "hrt": hrt , "dst": dst , "spd": spd, "trend": trendId}
+  measurets=time.time()
+# hrt = freq; dst = non generato, da fare; spd = sped; tutto da SERIAL PORT
+  hrt = 1
+  dst = 100.0
+  spd = 50
+  payload = {"ts": int(measurets) , "hrt": hrt , "dst": dst , "spd": spd, "trend": trendId}
   sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
-  print(sendValue.text) #mi assicuro di ricevere dal server uno status code == 200
+  print("ho inviato una misurazione al server")
 
-  #una volta che la Serial port non genera più dati, allora devo chiudere il trend settando lo state a valid. 
+# una volta che la Serial port non genera piu dati, allora devo chiudere il trend settando lo state a valid. 
   urlTrend = "http://localhost:8000/api/trend/%s" %trendId
   stateClose = "VALID"
-  distance = "DA DOVE LO PRENDO IL PARAMETRO FINALE?"
-  maxhrt = "DA DOVE LO PRENDO IL PARAMETRO FINALE?"
-  minhrt = "DA DOVE LO PRENDO IL PARAMETRO FINALE?"
-  avghrt = "DA DOVE LO PRENDO IL PARAMETRO FINALE?"
-  payloadClose = {"horse":horse, "beginTs": int(ts), "state": stateClose , "distance": distance , "maxhrt": maxhrt , "minhrt": minhrt , "avghrt": avghrt}
+  endTs = time.time()
+  distance = 100
+  maxhrt = 130
+  minhrt = 40
+  avghrt = 70
+  payloadClose={"horse": horse, "beginTs": int(ts), "state": stateClose , "distance": 30.0 , "maxhrt": 150 , "minhrt": 70 , "avghrt": 110 , "endTs" : int(endTs)}
   closeTrend = (requests.put(urlTrend, headers=header, json=(payloadClose)))
   print(closeTrend.text)
   #problema: come posso sapere se ho avuto perdite di dati e settare quindi il trend con state a invalid?
-
-
   print('exiting.')
   
 
