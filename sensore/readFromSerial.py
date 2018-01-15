@@ -83,8 +83,6 @@ def main():
   authorization = "Bearer %s" %token
   header = {'Access-Control-Allow-Origin':'*', 'Authorization': authorization}
   payload={"horse":horse, "beginTs": int(ts), "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100}
-  #print(payload)
-  #print(header)
   openTrend = (requests.post(url, headers=header, json=(payload)))
   print(openTrend.text)
   jsonResult = json.loads(openTrend.text)
