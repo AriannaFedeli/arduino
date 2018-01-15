@@ -98,18 +98,6 @@ def main():
   sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
   print("ho inviato una misurazione al server")
 
-# una volta che la Serial port non genera piu dati, allora devo chiudere il trend settando lo state a valid. 
-  urlTrend = "http://localhost:8000/api/trend/%s" %trendId
-  stateClose = "VALID"
-  endTs = time.time()
-  distance = 100
-  maxhrt = 130
-  minhrt = 40
-  avghrt = 70
-  payloadClose={"horse": horse, "beginTs": int(ts), "state": stateClose , "distance": 30.0 , "maxhrt": 150 , "minhrt": 70 , "avghrt": 110 , "endTs" : int(endTs)}
-  closeTrend = (requests.put(urlTrend, headers=header, json=(payloadClose)))
-  print(closeTrend.text)
-  #problema: come posso sapere se ho avuto perdite di dati e settare quindi il trend con state a invalid?
   print('exiting.')
   
 
