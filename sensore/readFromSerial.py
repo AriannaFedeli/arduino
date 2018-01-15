@@ -78,17 +78,19 @@ def main():
 
   print('reading from serial port %s...' % strPort)
   url = "http://localhost:8000/api/trend"
-  authorization = {'Authorization': 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX09QRVJBVE9SIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdHVzZXIyIiwiaWF0IjoxNTE2MDE3NTE0LCJleHAiOjE1MTYwNTM1MTR9.gQmdZlomJLANxNPfjYvM_aB8qJodJmIOfraDu0qtHtUrqa21ImDHLTztfLFED47iM_8pMd0E0UrW_qCBYuSe9bKGWsbafp6ntvb2EAYA_f0x7zTZBtuylg9-fiqk96nT8Kt4pCffeoMawhLY_nllkzByJbA8UgUMx6Ged95rbZmpph4HOb4WbRy6avgCXunlbXRGafIeMyym1I5N2oXVgBgd1KrE11xp845Ut1viVAClyswTGrKeYadnXRLKfnJZkdSpQOtEhXGmDgbms63niH_780-LJLFsAU84amxcU0VM6MDyyt3HY8xU6Yg6IDFNuxG3AeBNPOiSyM6CHL4DMkqNs8bw4VLD_X1JeGLU78kaQj--0OVWPM46kR7EuY6UmjuwCtQkn5cKsZpROmxwbWBUrf64G59HDPQNUGHcpXqir3zrDhYSx3XzHYCzaB19NPuRhv9RrqBkl_mLmwmt0u4xtf_Rk9Jgg1e8spQu5dqvS1K1mtuFZPZHi0Xwqvzu4BmSRP4PBoXR6z1WuQ-ZGZouJ4SVZXPWlOke4cREtOGl8sr1t_udMk9BO6FJ4BYheVrZf0-jISE4ZX3G9Bp0cTsZkljav5VrGZAM2W2fnG0i7XDmCY4vqBLPEvlJAZMSBb2V5ZQ_LsXhSa5esudb-Y5xYS5QQL5RVAEIyrQ7L_E'}
   state = "BUILDING"
   ts=time.time()
   #beginTs = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
   horse = 1
-  contenttype = {'Content-Type':'application/json'}
-  header = {'Content-Type':'application/json', 'Authorization': 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX09QRVJBVE9SIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdHVzZXIyIiwiaWF0IjoxNTE2MDE3NTE0LCJleHAiOjE1MTYwNTM1MTR9.gQmdZlomJLANxNPfjYvM_aB8qJodJmIOfraDu0qtHtUrqa21ImDHLTztfLFED47iM_8pMd0E0UrW_qCBYuSe9bKGWsbafp6ntvb2EAYA_f0x7zTZBtuylg9-fiqk96nT8Kt4pCffeoMawhLY_nllkzByJbA8UgUMx6Ged95rbZmpph4HOb4WbRy6avgCXunlbXRGafIeMyym1I5N2oXVgBgd1KrE11xp845Ut1viVAClyswTGrKeYadnXRLKfnJZkdSpQOtEhXGmDgbms63niH_780-LJLFsAU84amxcU0VM6MDyyt3HY8xU6Yg6IDFNuxG3AeBNPOiSyM6CHL4DMkqNs8bw4VLD_X1JeGLU78kaQj--0OVWPM46kR7EuY6UmjuwCtQkn5cKsZpROmxwbWBUrf64G59HDPQNUGHcpXqir3zrDhYSx3XzHYCzaB19NPuRhv9RrqBkl_mLmwmt0u4xtf_Rk9Jgg1e8spQu5dqvS1K1mtuFZPZHi0Xwqvzu4BmSRP4PBoXR6z1WuQ-ZGZouJ4SVZXPWlOke4cREtOGl8sr1t_udMk9BO6FJ4BYheVrZf0-jISE4ZX3G9Bp0cTsZkljav5VrGZAM2W2fnG0i7XDmCY4vqBLPEvlJAZMSBb2V5ZQ_LsXhSa5esudb-Y5xYS5QQL5RVAEIyrQ7L_E'}
-  payload={"horse":horse, "beginTs": int(ts), "endTs": int(ts), "state": state,"distance": 20.0,"maxhrt": 120,"minhrt": 80,"avghrt": 100}
+  header = {'Access-Control-Allow-Origin':'*',
+  'Authorization': "Bearer eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX09QRVJBVE9SIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdHVzZXIyIiwiaWF0IjoxNTE2MDI0MjcyLCJleHAiOjE1MTYwMjc4NzJ9.MDsZXExujwyJz8ubeBcqFxdwBnzSHXuOjFqJVXarmWU-ERZoYrpkW0U1NIzxBvLe2u1KIO61a43hgeDigkHN5cgoq48p10yqDaCGdujYinz6RKzI51nXKPkruC-ETyN8fSIFNwVJfvSJ2B-hTFnBbRXQ6fPdxgtV-kZaa_T9409-OOrXMMWjzRrRCNWlluu48yE5ZkpiXzWAPEKlr4eMvhqBxKYSIjfBeIG98xWEtQYwqbj0sJU9wCme6HjhzL_V0ggNr9Xmd3eSy6WenROWMMWX4T_tgq10ymoWfLFoTy3pF39mMNW1BEBmPR4UWsiwtluIJhcb90M4zdavaDMv2TzBa0vWl4bKYkroIMCPt5BkWyPShebGmn4ZX4GyH6NZF4-qAVXV8ZIhhQ6hJ27oD67vs7VKH8H-5SBXP2_0fpE9Pv89Bzc0hOaGlDQWLN27mF_MI0vFRHOg7enPtBUh6Xz8gt3ENdp_B6ZALXomZ9EAUBwzz0rh-LM-gzt_hek4Od2RS915iMmSrf6nkz31Tsu3qabNVe_6rO4TRQYRDfigr6WkUMHf2K8y6eANcRM3v2WqKE_gcQz3Ke4KPZzuRzHmdtmIQhsP30vwuHq4K-GW5YsmeVHaeGGVNRBN4CW1yKNReUBD3fA7UItf4kcDTZpHRsZu19OxYXoSVwyiKTQ"}
+  payload={"horse":horse, "beginTs": int(ts), "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100}
   print(payload)
-  openTrend = requests.post(url, headers=header, data=payload)
-  print(openTrend.text)
+  print(header)
+  openTrend = (requests.post(url, headers=header, json=(payload)))
+  json =(openTrend)
+  print(openTrend)
+  print(json.text)
   # plot parameters
   '''analogPlot = AnalogPlot(strPort, 100)
 
