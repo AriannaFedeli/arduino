@@ -27,31 +27,6 @@ ser = serial.Serial(
 # prendo il token dal json
 def main():
     print "Programma di monitoraggio cavalli."
-    while(1):
-        data = ser.readline()
-        splitd = data.decode("utf-8").split(",")
-	#splitd = data.split(",")
-     
-        if len(splitd)==3:
-            frequenza = splitd[0]
-            speed = splitd[1]
-            distance = splitd[2]
-            print frequenza, speed, distance
-        # qui dovrei eseguire ogni volta una post della measure
-        # fare json, formattarlo e inviarlo nella request
-        #r = requests.post(url, headers=headers)
-# create parser
-    parser = argparse.ArgumentParser(description="LDR serial")
-  # add expected arguments
-    parser.add_argument('--port', dest='port', required=True)
-
-  # parse args
-    args = parser.parse_args()
-  
-  #strPort = '/dev/ttyACM0'
-    strPort = args.port
-
-    print('reading from serial port %s...' % strPort)
     urlLogin = "http://localhost:8000/login_check"
     username = "testUser2"
     password = "arrivederci"
@@ -71,13 +46,41 @@ def main():
     jsonResult = json.loads(openTrend.text)
     trendId = jsonResult['id']
     print("ho aperto il trend e l'id e %s") %trendId
+    while(1):
+        data = ser.readline()
+        splitd = data.decode("utf-8").split(",")
+	#splitd = data.split(",")
+     
+        if len(splitd)==3:
+            frequenza = splitd[0]
+            speed = splitd[1]
+            distance = splitd[2]
+            print frequenza, speed, distance
+            urlMeasure = "http://localhost:8000/api/measure"
+            measurets=time.time()
+            payload = {"ts": int(measurets) , "hrt": frequenza , "dst": distance , "spd": speed, "trend": trendId}
+            sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
+            print("ho inviato una misurazione al server")
+        # qui dovrei eseguire ogni volta una post della measure
+        # fare json, formattarlo e inviarlo nella request
+        #r = requests.post(url, headers=headers)
+# create parser
+    parser = argparse.ArgumentParser(description="LDR serial")
+  # add expected arguments
+    parser.add_argument('--port', dest='port', required=True)
+
+  # parse args
+    args = parser.parse_args()
+  
+  #strPort = '/dev/ttyACM0'
+    strPort = args.port
+
+    print('reading from serial port %s...' % strPort)
+    
 # questo lo devo eseguire in loop fino a quando la serial non prende piu alcun dato  
-    urlMeasure = "http://localhost:8000/api/measure" 
-    measurets=time.time()
-# hrt = freq; dst = non generato, da fare; spd = sped; tutto da SERIAL PORT
-    payload = {"ts": int(measurets) , "hrt": frequenza , "dst": distance , "spd": speed, "trend": trendId}
-    sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
-    print("ho inviato una misurazione al server")
+    
+
+    
     print('exiting.') 
  
 def send(packet):
