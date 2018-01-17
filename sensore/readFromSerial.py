@@ -77,12 +77,12 @@ def main():
   print("ho il token")
   url = "http://localhost:8000/api/trend"
   state = "BUILDING"
-  ts=time.time()
+  ts=int(time.time())
   #ATTENZIONE: L'APERTURA DEL TREND NON DEVE ESSERE ESEGUITA IN MANIERA CICLICA
   horse = 1
   authorization = "Bearer %s" %token
   header = {'Access-Control-Allow-Origin':'*', 'Authorization': authorization}
-  payload={"horse": horse, "beginTs": int(ts), "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100 , "endTs" : 1}
+  payload={"horse": horse, "beginTs": ts, "state": state , "distance": 20.0 , "maxhrt": 120 , "minhrt": 80 , "avghrt": 100 , "endTs" : 1}
   openTrend = (requests.post(url, headers=header, json=(payload)))
   jsonResult = json.loads(openTrend.text)
   trendId = jsonResult['id']

@@ -10,7 +10,7 @@ import requests
 import json
 
 
-SERIAL_PORT = "/dev/ttyACM1"
+SERIAL_PORT = "/dev/ttyACM0"
 SERIAL_BAUD_RATE = 9800
 
 ser = serial.Serial(
@@ -36,12 +36,13 @@ def main():
     print("ho il token")
     url = "http://localhost:8000/api/trend"
     state = "BUILDING"
-    ts=time.time()
+    ts = int(time.time())
     #ATTENZIONE: L'APERTURA DEL TREND NON DEVE ESSERE ESEGUITA IN MANIERA CICLICA
     horse = 1
     authorization = "Bearer %s" %token
     header = {'Access-Control-Allow-Origin':'*', 'Authorization': authorization}
-    payload={"horse": horse, "beginTs": int(ts), "state": state}
+    print(int(ts))
+    payload={"horse": horse, "begints":ts,"state":state , "distance": 0.0 , "maxhrt": 0 , "minhrt": 0 , "avghrt": 0 , "endTs": 0}
     openTrend = (requests.post(url, headers=header, json=(payload)))
     jsonResult = json.loads(openTrend.text)
     trendId = jsonResult['id']
@@ -49,21 +50,24 @@ def main():
     while(1):
         data = ser.readline()
         splitd = data.decode("utf-8").split(",")
-	#splitd = data.split(",")
-     
+
         if len(splitd)==3:
             frequenza = splitd[0]
             speed = splitd[1]
             distance = splitd[2]
-            print frequenza, speed, distance
+            
             urlMeasure = "http://localhost:8000/api/measure"
-            measurets=time.time()
-            payload = {"ts": int(measurets) , "hrt": frequenza , "dst": distance , "spd": speed, "trend": trendId}
+            measurets = time.time()
+            
+            payload = {"ts": int(measurets) , "hrt": int(float(frequenza)), "dst": int(float(distance)), "spd": int(float(speed)), "trend": trendId}
             sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
-            print("ho inviato una misurazione al server")
-        # qui dovrei eseguire ogni volta una post della measure
-        # fare json, formattarlo e inviarlo nella request
-        #r = requests.post(url, headers=headers)
+        else:
+            urlCloseTrend = "http://localhost:8000/api/trend/%s" %trendId
+            closeTrend = (requests.put(urlCloseTrend, headers=header, json=(payload)))
+            print(closeTrend.text)
+            print("exiting")
+
+   
 # create parser
     parser = argparse.ArgumentParser(description="LDR serial")
   # add expected arguments
@@ -74,10 +78,6 @@ def main():
   
   #strPort = '/dev/ttyACM0'
     strPort = args.port
-
-    print('reading from serial port %s...' % strPort)
-    
-# questo lo devo eseguire in loop fino a quando la serial non prende piu alcun dato  
     
 
     
