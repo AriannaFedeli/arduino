@@ -1,21 +1,20 @@
 int freq;
 double sped;
 
-double speed_max = 40;
+double speed_max = 50;
 double speed_min = 0;
 int freq_max = 100;
 int freq_min;
-
-#define ENERGY_MAX 500
-
-#define ENERGY_PERCENT_GAINED 10
-#define ENERGY_PERCENT_TROTTO_USED -5
-#define ENERGY_PERCENT_GALOPPO_USED -15
-#define ENERGY_PERCENT_RECOVER_AFTER 5
-#define ENERGY_MAX 500
+double distance=0;
+int ENERGY_PERCENT_GAINED;
+int ENERGY_PERCENT_TROTTO_USED;
+int ENERGY_PERCENT_GALOPPO_USED;
+int ENERGY_PERCENT_RECOVER_AFTER;
+int ENERGY_MAX=80;
 // the lower it is, more stable is the horse with speed.
-#define HORSE_TRAINING 10
-
+int HORSE_TRAINING;
+//horse training speed is beetween 1 and 2
+int HORSE_TRAINING_SPEED;
 int minAccelleration = -5;
 int maxAccelleration = 10;
 double energy;
@@ -34,25 +33,34 @@ void incrEnergy(int incr){
   
 }
 void setup() {
+    randomSeed(analogRead(0));
   // put your setup code here, to run once:  
+
+  ENERGY_PERCENT_GAINED = random(15,25);
+  ENERGY_PERCENT_TROTTO_USED =random(-7,-1);
+  ENERGY_PERCENT_GALOPPO_USED=random(-12,-6);
+  ENERGY_PERCENT_RECOVER_AFTER=25;
+  ENERGY_MAX=random(80,120);
+  HORSE_TRAINING=random(7,11);
+  HORSE_TRAINING_SPEED=2;
   sped = 0;
   energy = energyMax;
   freq = computeHeartRate(sped);
   Serial.begin(9600);
-  randomSeed(analogRead(0));
+
 }
 
 int computeHeartRate(double sped){
   if (sped >= 0 && sped < 5){
-    Serial.println("passo");
+    //Serial.println("passo");
     return int(2.5*sped+30);
   }else
-  if (sped >= 5 && sped < 30){
-    Serial.println("trotto");
+  if (sped >= 5 && sped < 20){
+    //Serial.println("trotto");
     return int(5.57377*sped+24.5902);
   }else
-  if (sped >= 30){
-    Serial.println("galoppo");
+  if (sped >= 20){
+    //Serial.println("galoppo");
     return int(( -1*((sped*sped)/5) + 18*sped -180));
   }
 }
@@ -60,7 +68,7 @@ int computeHeartRate(double sped){
 
 
 int computeIncrement(){
-   double energyHalf = energyMax/2;
+   double energyHalf = energyMax/HORSE_TRAINING_SPEED;
    double energyLeft = energyHalf - (energyMax/HORSE_TRAINING);
    double energyRight = energyHalf + (energyMax/HORSE_TRAINING);
    
@@ -92,7 +100,7 @@ void computeEnergy(){
 void loop() {
 
   int increment = computeIncrement();
-  
+ 
   
   
   sped += increment ; // calcola la variazione di velocità.
@@ -110,19 +118,13 @@ void loop() {
   }
   
   computeEnergy(); // after the effort fix energy.
-  
   freq = computeHeartRate(sped);
-  
+  distance = distance + (sped*1000)/3600;
   Serial.print(freq);
-  Serial.print("|");
-  
+  Serial.print(",");
   Serial.print(sped);
-  Serial.print("|");
-  Serial.println(energy);
-  
-  
-  //quando scrivo devo pure fare la post al server, rimane da gestire la cosa del capire a che trend mi sto riferendo per inviare le misurazioni
-
+  Serial.print(",");
+  Serial.println(distance);
   delay(1000); // wait.
 }
 
