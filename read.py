@@ -9,6 +9,7 @@ from collections import deque
 import requests
 import json
 import keyboard
+from time import localtime
 
 SERIAL_PORT = "/dev/ttyACM0"
 SERIAL_BAUD_RATE = 9800
@@ -36,40 +37,55 @@ def main():
     print("Ho ottenuto il token dal server")
     url = "http://localhost:8000/api/trend"
     state = "BUILDING"
-    ts = int(time.time())
-    #ATTENZIONE: L'APERTURA DEL TREND NON DEVE ESSERE ESEGUITA IN MANIERA CICLICA
+    currentUtc = datetime.utcnow()
+    datets = currentUtc + timedelta(hours=1)
+    print(datets)
+    since = datetime( 1970, 1, 1, 0, 0, 0 )
+    ts = int((datets-since).total_seconds())
     horse = 1
-    count = 0
     authorization = "Bearer %s" %token
     header = {'Access-Control-Allow-Origin':'*', 'Authorization': authorization}
     payload={"horse": horse, "begints":ts,"state":state , "distance": 0 , "maxhrt": 0 , "minhrt": 0 , "avghrt": 0 , "endTs": 0}
     openTrend = (requests.post(url, headers=header, json=(payload)))
     jsonResult = json.loads(openTrend.text)
+    print(openTrend.text)
     trendId = jsonResult['id']
     print("Ho aperto il trend e l'id e %s") %trendId
     count = 0
-    while(count<20):
-        data = ser.readline()
-        splitd = data.decode("utf-8").split(",")
+    try:
+        while(count<20):
+            data = ser.readline()
+            splitd = data.decode("utf-8").split(",")
 
-        if len(splitd)==3:
-            frequenza = splitd[0]
-            speed = splitd[1]
-            distance = splitd[2]
-            urlMeasure = "http://localhost:8000/api/measure"
-            measurets = time.time()
-            payload = {"ts": int(measurets) , "hrt": int(float(frequenza)), "dst": int(float(distance)), "spd": int(float(speed)), "trend": trendId}
-            sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
-            print(payload)
-            count = count +1
-        
+            if len(splitd)==3:
+                frequenza = splitd[0]
+                speed = splitd[1]
+                distance = splitd[2]
+                urlMeasure = "http://localhost:8000/api/measure"
+                currentUtc = datetime.utcnow()
+                datets = currentUtc + timedelta(hours=1)
+                measurets = int((datets-since).total_seconds())
+                payload = {"ts": int(measurets) , "hrt": int(float(frequenza)), "dst": int(float(distance)), "spd": int(float(speed)), "trend": trendId}
+                sendValue = (requests.post(urlMeasure, headers=header, json=(payload)))
+                print(payload)
+                count = count +1
+    except serial.SerialException as e:
+        urlCloseTrend = "http://localhost:8000/api/trend/%s" %trendId
+        state = "INVALID"
+        payload = {"endTs": measurets, "state":state}
+        closeTrend = (requests.put(urlCloseTrend, headers=header, json=(payload)))
+        return None
+    except TypeError as e:
+        #Disconnect of USB->UART occured
+        Serial.close()
+        return None   
             
     print("Ho inviato %d misurazioni per il trend %d") %(count, trendId)
     urlCloseTrend = "http://localhost:8000/api/trend/%s" %trendId
     state = "VALID"
-    ts = int(time.time())
-    payload = {"trend": trendId}
+    payload = {"endTs": measurets, "state":state}
     closeTrend = (requests.put(urlCloseTrend, headers=header, json=(payload)))
+    print(closeTrend.text)
     print("Ho chiuso il trend %d") %trendId
 # create parser
     parser = argparse.ArgumentParser(description="LDR serial")
