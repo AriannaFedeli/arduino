@@ -53,7 +53,7 @@ def main():
     print("Ho aperto il trend e l'id e %s") %trendId
     count = 0
     try:
-        while(count<20):
+        while(count<180):
             data = ser.readline()
             splitd = data.decode("utf-8").split(",")
 

@@ -1,7 +1,7 @@
 int freq;
 double sped;
 
-double speed_max = 50;
+double speed_max = 40;
 double speed_min = 0;
 int freq_max = 100;
 int freq_min;
