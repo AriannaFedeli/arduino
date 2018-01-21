@@ -11,7 +11,7 @@ import json
 import keyboard
 from time import localtime
 
-SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "/dev/ttyACM1"
 SERIAL_BAUD_RATE = 9800
 
 ser = serial.Serial(
@@ -74,9 +74,14 @@ def main():
         state = "INVALID"
         payload = {"endTs": measurets, "state":state}
         closeTrend = (requests.put(urlCloseTrend, headers=header, json=(payload)))
+	Serial.close()
         return None
     except TypeError as e:
         #Disconnect of USB->UART occured
+        urlCloseTrend = "http://localhost:8000/api/trend/%s" %trendId
+        state = "INVALID"
+        payload = {"endTs": measurets, "state":state}
+        closeTrend = (requests.put(urlCloseTrend, headers=header, json=(payload)))
         Serial.close()
         return None   
             
