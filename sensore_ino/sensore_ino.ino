@@ -49,7 +49,7 @@ void setup() {
 int computeHeartRate(double sped) {
   if (sped >= 0 && sped < 5) {
     //Serial.println("passo");
-    return int(2.5 * sped + 30);
+    return int(2 * sped + 30);
   } else if (sped >= 5 && sped < 20) {
     //Serial.println("trotto");
     return int(5.57377 * sped + 24.5902 );
@@ -58,8 +58,6 @@ int computeHeartRate(double sped) {
     return int(( -1 * ((sped * sped) / 5) + 18 * sped - 180));
   }
 }
-
-
 
 int computeIncrement() {
   double energyHalf = energyMax / HORSE_TRAINING_SPEED ;
